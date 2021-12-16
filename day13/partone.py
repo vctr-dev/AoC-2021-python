@@ -1,3 +1,5 @@
+from my_utils import draw
+
 filename = 'input.txt'
 
 
@@ -36,20 +38,6 @@ def transform(coord, line):
 	return line - (coord - line)
 
 
-def render_dots(dots):
-	min_x = min([get_x(dot) for dot in dots])
-	min_y = min([get_y(dot) for dot in dots])
-	max_x = max([get_x(dot) for dot in dots])
-	max_y = max([get_y(dot) for dot in dots])
-	lines = []
-	for x in range(min_x, max_x + 1):
-		row = []
-		for y in range(min_y, max_y + 1):
-			row.append('#' if (x, y) in dots else ' ')
-		lines.append(''.join(row))
-	print('\n'.join(lines))
-
-
 data = open(filename).read()
 
 [dots, folds] = data.split('\n\n')
@@ -62,5 +50,5 @@ for [axis, line] in folds:
 	elif axis == 'y':
 		fold_y_axis(dots, line)
 
-render_dots(dots)
+draw.grid(dots, empty_char=' ')
 
