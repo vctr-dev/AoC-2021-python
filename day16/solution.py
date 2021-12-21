@@ -45,20 +45,25 @@ def make_packet(feed):
 		sub_packets_feed = Feed(feed.take(sub_packets_length))
 		return make_length_operator_packet(version, type_id, sub_packets_feed)
 	else:
-		num_sub_packets= int(feed.take(11), 2)
-		return make_num_sub_packets_operator_packet(version, type_id, feed, num_sub_packets)
+		num_sub_packets = int(feed.take(11), 2)
+		return make_num_sub_packets_operator_packet(version, type_id, feed,
+																																														num_sub_packets)
 
-def make_num_sub_packets_operator_packet(version, type_id, feed, num_sub_packets):
+
+def make_num_sub_packets_operator_packet(version, type_id, feed,
+																																									num_sub_packets):
 	packets = []
 	for _ in range(0, num_sub_packets):
 		packets.append(make_packet(feed))
 	return Packet(version, type_id, None, packets)
+
 
 def make_length_operator_packet(version, type_id, feed):
 	packets = []
 	while (len(feed)):
 		packets.append(make_packet(feed))
 	return Packet(version, type_id, None, packets)
+
 
 def make_literal_packet(version, type_id, feed):
 	bin = ''
@@ -69,6 +74,7 @@ def make_literal_packet(version, type_id, feed):
 			break
 	return Packet(version, type_id, int(bin, 2))
 
+
 def gather_versions(packet):
 	version = 0
 	explore = [packet]
@@ -77,13 +83,17 @@ def gather_versions(packet):
 		version += p.version
 		explore += p.sub_packets
 	return version
+
+
 # part two
+
 
 def mul(iterables):
 	res = 1
 	for n in iterables:
 		res *= n
 	return res
+
 
 def compute_packet(packet):
 	if packet.type_id == 4:
@@ -105,6 +115,7 @@ def compute_packet(packet):
 	if packet.type_id == 7:
 		return 1 if first == second else 0
 
+
 input = open('input.txt').read().strip()
 
 # part one examples
@@ -116,18 +127,20 @@ example4 = '620080001611562C8802118E34'
 example5 = 'C0015000016115A2E0802F182340'
 example6 = 'A0016C880162017C3686B18A3D4780'
 
-
 # part two examples
-example_part_two = [('C200B40A82', 3), ('04005AC33890', 54), ('880086C3E88112', 7), ('CE00C43D881120', 9), 
-('D8005AC2A8F0', 1),
-('F600BC2D8F', 0),
-('9C005AC2F8F0', 0),
-('9C0141080250320F1802104A08', 1)]
-for (inp, out) in example_part_two:
-	feed = Feed(parse(inp))
-	root_packet = make_packet(feed)
-	print(compute_packet(root_packet) == out)
+example_part_two = [('C200B40A82', 3), ('04005AC33890', 54), (
+	'880086C3E88112', 7), ('CE00C43D881120', 9), ('D8005AC2A8F0', 1), (
+		'F600BC2D8F', 0), ('9C005AC2F8F0', 0), ('9C0141080250320F1802104A08', 1)]
+
+
+def test_part_two():
+	for (inp, out) in example_part_two:
+		feed = Feed(parse(inp))
+		root_packet = make_packet(feed)
+		assert compute_packet(root_packet) == out
+
 
 feed = Feed(parse(input))
 root_packet = make_packet(feed)
 print(compute_packet(root_packet))
+
